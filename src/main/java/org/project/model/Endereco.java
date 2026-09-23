@@ -40,7 +40,7 @@ public class Endereco {
 
     // --- Getters e Setters ---
     public int getId() { return id; }
-    public void stId(int id) {this.id = id;}
+    public void setId(int id) {this.id = id;}
 
     public String getCep() {return cep;}
     public void setCep(String cep) {this.cep = cep;}

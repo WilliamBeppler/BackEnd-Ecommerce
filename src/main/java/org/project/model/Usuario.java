@@ -1,5 +1,6 @@
 package org.project.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
@@ -20,15 +21,22 @@ public class Usuario {
     private LocalDate nascimento;
 
     @Column(nullable = false, length = 50)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String telefone;
 
     @Column(nullable = false, unique = true, length = 14)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String cpf;
 
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    // CRÍTICO: WRITE_ONLY, não @JsonIgnore.
+    // WRITE_ONLY deixa o Jackson LER a senha do corpo da requisição (cadastro e
+    // login precisam disso) mas nunca ESCREVE ela em nenhuma resposta JSON.
+    // @JsonIgnore puro bloquearia os dois lados e quebraria o login.
     @Column(nullable = false, length = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
 
     @Column(nullable = false)

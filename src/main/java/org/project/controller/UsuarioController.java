@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -21,13 +20,12 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired // Adicione isso!
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/registrar")
     public ResponseEntity<Object> registrarUsuario(@RequestBody Usuario novoUsuario) {
 
-        // 1.Regra de Negócio: Verifica se o e-mail já existe no banco
         if (usuarioRepository.findByEmail(novoUsuario.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Erro: Este e-mail já está cadastrado na loja.");
         }
@@ -37,20 +35,24 @@ public class UsuarioController {
         String senhaCriptografada = passwordEncoder.encode(novoUsuario.getSenha());
         novoUsuario.setSenha(senhaCriptografada);
 
-        // 2.O comando .save() devolve o usuário com o ID preenchido pelo banco!
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
 
-        // 3. Devolve o objeto inteiro (JSON) para o Front-End pegar o ID
-        return ResponseEntity.ok(usuarioSalvo);
+        // CORREÇÃO 1: já emite o token no cadastro.
+        // Antes, quem se cadastrava ia direto pro checkout SEM token e tomava
+        // 403 no POST /api/pedidos, porque essa rota exige .authenticated().
+        String token = jwtService.gerarToken(usuarioSalvo.getEmail(), usuarioSalvo.getRole());
+
+        // CORREÇÃO 2: devolve um Map, não a entidade inteira.
+        // Antes o JSON de resposta incluía o campo 'senha' — o hash BCrypt do
+        // usuário ia parar no navegador dele.
+        return ResponseEntity.ok(montarRespostaAuth(usuarioSalvo, token));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUsuario(@RequestBody Usuario dadosLogin) {
 
-        // 1. O Repository vai no MySQL procurar alguém com o e-mail digitado
         Usuario usuarioNoBanco = usuarioRepository.findByEmail(dadosLogin.getEmail());
 
-        // 2. Primeira barreira de defesa: O e-mail existe no cofre?
         if (usuarioNoBanco == null) {
             return ResponseEntity.status(401).body("Erro: E-mail não cadastrado.");
         }
@@ -61,12 +63,20 @@ public class UsuarioController {
 
         String token = jwtService.gerarToken(usuarioNoBanco.getEmail(), usuarioNoBanco.getRole());
 
-        return ResponseEntity.ok(Map.of (
-                "token", token,
-                "nome", usuarioNoBanco.getNome(),
-                "role", usuarioNoBanco.getRole()
-        ));
-
+        // CORREÇÃO 3 (o bug principal): inclui o 'id' na resposta.
+        // Sem ele o front não tinha como gravar idUsuarioLogado, e o checkout
+        // achava que ninguém estava logado na hora de pagar.
+        return ResponseEntity.ok(montarRespostaAuth(usuarioNoBanco, token));
     }
 
+    /** Resposta única de autenticação — cadastro e login devolvem o mesmo formato. */
+    private Map<String, Object> montarRespostaAuth(Usuario usuario, String token) {
+        return Map.of(
+                "id", usuario.getId(),
+                "nome", usuario.getNome(),
+                "email", usuario.getEmail(),
+                "role", usuario.getRole(),
+                "token", token
+        );
+    }
 }

@@ -1,4 +1,3 @@
-
 package org.project.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,9 +11,7 @@ public class ItemPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Relacionamento: Vários itens pertencem a Um único Pedido
     @ManyToOne
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     @JoinColumn(name = "pedido_id", nullable = false)
     @JsonIgnore
     private Pedido pedido;
