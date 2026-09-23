@@ -31,6 +31,9 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String senha;
 
+    @Column(nullable = false)
+    private String role = "CLIENTE";
+
     // A data será preenchida automaticamente pelo banco de dados
     @CreationTimestamp
     @Column(name = "data_registro", insertable = false, updatable = false)
@@ -74,5 +77,9 @@ public class Usuario {
 
     public LocalDateTime getDataRegistro() { return dataRegistro; }
     public void setDataRegistro(LocalDateTime dataRegistro) { this.dataRegistro = dataRegistro; }
+
+    public String getRole() {return role;}
+
+    public void setRole(String role) {this.role = role;}
 
 }

@@ -37,3 +37,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Seguranca ###
+application.properties
+application-dev.properties
+.env
