@@ -1,4 +1,6 @@
 package org.project.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -9,6 +11,9 @@ public class ItemPedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // READ_ONLY: o id aparece nas respostas, mas é IGNORADO se vier num JSON de entrada.
+    // Segunda camada além dos DTOs: um "id" vindo do navegador nunca vira UPDATE de outro registro.
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
 
     @ManyToOne
@@ -24,7 +29,7 @@ public class ItemPedido {
     @Column(nullable = false)
     private int quantidade;
 
-    // Preço exato do livro no momento em que o cliente apertou "Comprar"
+    // Preço exato do produto no momento em que o cliente apertou "Comprar"
     @Column(name = "preco_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precoUnitario;
 

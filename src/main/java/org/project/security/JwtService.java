@@ -17,6 +17,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration; // em milissegundos
 
+    // O cookie usa a mesma validade do token, para os dois vencerem juntos
+    public long getExpiration() {
+        return expiration;
+    }
+
     // Transforma o texto da chave secreta num formato que o algoritmo entende
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
