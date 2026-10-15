@@ -10,21 +10,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Trava por Origin nas rotas que ALTERAM produtos (POST, PUT, DELETE em /api/produtos/**).
- *
- * O cookie do token é o mesmo na loja e no painel. Sem esta trava, um script malicioso
- * rodando na loja (XSS) conseguiria usar o cookie de um admin logado no mesmo navegador.
- * O cabeçalho Origin é escrito pelo NAVEGADOR (o JavaScript da página não consegue
- * alterá-lo), então só o painel (ADMIN_ORIGINS) passa.
- *
- * Isto NÃO substitui o hasRole("ADMIN"): o hasRole confere QUEM pede, esta trava confere
- * DE ONDE veio o pedido. Fora do navegador (curl, Postman) o Origin pode ser forjado, mas aí
- * não há cookie de admin para roubar.
- *
- * Não é @Component de propósito: o SecurityConfig cria e posiciona este filtro, para ele
- * não ser registrado duas vezes.
- */
 public class AdminOriginFilter extends OncePerRequestFilter {
 
     private static final Set<String> METODOS_QUE_ALTERAM = Set.of("POST", "PUT", "PATCH", "DELETE");
