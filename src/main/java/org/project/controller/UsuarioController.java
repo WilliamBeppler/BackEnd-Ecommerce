@@ -75,10 +75,6 @@ public class UsuarioController {
 
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
 
-        // CORREÇÃO 1: já emite o token no cadastro.
-        // Antes, quem se cadastrava ia direto pro checkout SEM token e tomava
-        // 403 no POST /api/pedidos, porque essa rota exige .authenticated().
-        // CORREÇÃO 2: devolve um Map, não a entidade inteira (a senha vazava no JSON).
         return respostaComSessao(usuarioSalvo);
     }
 
@@ -91,10 +87,6 @@ public class UsuarioController {
 
         String email = dadosLogin.email().trim();
 
-        // IP de quem conectou. ATENÇÃO em produção: atrás de um proxy (Nginx, Cloudflare,
-        // balanceador), todo mundo chegaria com o IP do proxy. Aí é preciso configurar
-        // server.forward-headers-strategy confiando SÓ no seu proxy. Nunca ler o
-        // X-Forwarded-For direto: qualquer um inventa esse cabeçalho e ganha um IP novo
         // a cada tentativa, o que anularia o limite por IP.
         String ip = request.getRemoteAddr();
 
