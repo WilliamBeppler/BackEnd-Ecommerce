@@ -39,7 +39,6 @@ build/
 .DS_Store
 
 ### Seguranca ###
-# application.properties agora E versionado: os segredos vem de variaveis de ambiente.
 # Valores reais ficam so no .env (modelo: .env.example, que e versionado).
 application-dev.properties
 .env
