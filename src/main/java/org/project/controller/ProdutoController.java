@@ -24,7 +24,6 @@ public class ProdutoController {
     private static final BigDecimal PRECO_MAXIMO = new BigDecimal("99999999.99");
 
     // Imagens que já estão na pasta imgs da loja: "../imgs/foto.jpeg" ou "/imgs/foto.jpeg".
-    // Só letras, números, _ e -, sem ".." no nome (não deixa sair da pasta imgs).
     private static final Pattern IMAGEM_LOCAL = Pattern.compile(
             "^(\\.\\./|/)imgs/[\\p{L}\\p{N}_-]+(\\.[\\p{L}\\p{N}_-]+)*\\.(jpe?g|png|webp)$",
             Pattern.CASE_INSENSITIVE);
