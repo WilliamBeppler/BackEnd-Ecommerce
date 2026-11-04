@@ -17,12 +17,10 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration; // em milissegundos
 
-    // O cookie usa a mesma validade do token, para os dois vencerem juntos
     public long getExpiration() {
         return expiration;
     }
 
-    // Transforma o texto da chave secreta num formato que o algoritmo entende
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
@@ -33,12 +31,12 @@ public class JwtService {
         Date validade = new Date(agora.getTime() + expiration);
 
         return Jwts.builder()
-                .subject(email)          // "dono" do crachá
-                .claim("role", role)     // informação extra: o cargo
-                .issuedAt(agora)         // quando foi emitido
-                .expiration(validade)    // quando expira
-                .signWith(getSigningKey()) // assina com a chave secreta
-                .compact();              // fecha e devolve como texto
+                .subject(email)
+                .claim("role", role)
+                .issuedAt(agora)
+                .expiration(validade)
+                .signWith(getSigningKey())
+                .compact();
     }
 
     // Abre o crachá e lê o que está escrito dentro. Se for falso ou expirado, dá erro.

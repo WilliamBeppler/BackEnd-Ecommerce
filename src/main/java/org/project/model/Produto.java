@@ -18,7 +18,6 @@ public class Produto {
 
     private String nome;
 
-    // Dinheiro sempre em BigDecimal (Java) + DECIMAL(10,2) (banco), igual a Pedido e ItemPedido
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal preco;
 

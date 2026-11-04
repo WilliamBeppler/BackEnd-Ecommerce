@@ -14,8 +14,6 @@ public record CadastroRequest(String nome,
                               String telefone,
                               LocalDate nascimento) {
 
-    // O toString() automático do record imprimiria a senha; se alguém logar este
-    // objeto, ela iria parar no log em texto puro. CPF e telefone também ficam de fora.
     @Override
     public String toString() {
         return "CadastroRequest[nome=" + nome + ", email=" + email + ", senha=***, cpf=***, telefone=***]";

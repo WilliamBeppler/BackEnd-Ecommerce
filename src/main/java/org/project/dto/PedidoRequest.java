@@ -9,8 +9,8 @@ import java.util.List;
  * então ninguém consegue sobrescrever o pedido ou o endereço de outro cliente.
  * Dono, preço, total e status também não estão aqui: são sempre decididos pelo servidor.
  */
+// Sem "metodoPagamento": a forma de pagamento é escolhida na página do Mercado Pago.
 public record PedidoRequest(EnderecoRequest endereco,
-                            String metodoPagamento,
                             List<ItemRequest> itens) {
 
     public record EnderecoRequest(String cep,

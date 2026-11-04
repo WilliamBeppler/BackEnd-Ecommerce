@@ -38,6 +38,7 @@ public class Usuario {
     // WRITE_ONLY deixa o Jackson LER a senha do corpo da requisição (cadastro e
     // login precisam disso) mas nunca ESCREVE ela em nenhuma resposta JSON.
     // @JsonIgnore puro bloquearia os dois lados e quebraria o login.
+
     @Column(nullable = false, length = 255)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;

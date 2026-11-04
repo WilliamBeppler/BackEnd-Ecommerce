@@ -27,10 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // O token chega no cookie HttpOnly que o login criou (o JS da página não o enxerga)
         String token = lerTokenDoCookie(request);
 
-        // Se não veio crachá nenhum, segue em frente (a rota pública decide se libera)
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
@@ -40,13 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String email = jwtService.extrairEmail(token);
             String role = jwtService.extrairRole(token);
 
-            // Cria a "autoridade" no formato que o Spring espera: ROLE_ADMIN, ROLE_CLIENTE...
             var autoridade = new SimpleGrantedAuthority("ROLE_" + role);
 
             var auth = new UsernamePasswordAuthenticationToken(
                     email, null, List.of(autoridade));
 
-            // "Carimba" essa requisição como autenticada
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 

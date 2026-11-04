@@ -8,9 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsuarioRepository  extends JpaRepository<Usuario, Integer> {
 
-    // O Spring Boot cria todas as funções de Salvar, Editar e deletar sozinho aqui!
-    // Podemos criar buscas personalizadas apenas declarando o nome da função:
-
     Usuario findByEmail(String email);
 
     boolean existsByCpf(String cpf);

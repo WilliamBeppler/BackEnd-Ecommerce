@@ -23,12 +23,30 @@ public class Pedido {
     @Column(name = "data_pedidos", updatable = false)
     private LocalDateTime dataPedido;
 
-    // BigDecimal é um dos tipos mais seguro no java para trabalhar com dinheiro
     @Column(name = "valor_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotal;
 
     @Column(nullable = false, length = 50)
-    private String status; // Ex: "Aguardando_pagamento", "pago", "cancelado"
+    private String status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_pagamento", nullable = false, length = 20)
+    private StatusPagamento statusPagamento = StatusPagamento.AGUARDANDO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_processamento", nullable = false, length = 20)
+    private StatusProcessamento statusProcessamento = StatusProcessamento.NAO_PROCESSADO;
+
+    @Column(name = "codigo_rastreio", length = 50)
+    private String codigoRastreio;
+
+    // --- Pagamento pelo gateway (Mercado Pago) ---
+
+    @Column(name = "gateway_pagamento_id", length = 50, unique = true)
+    private String gatewayPagamentoId;
+
+    @Column(name = "data_pagamento")
+    private LocalDateTime dataPagamento;
 
     @Column(name = "metodo_pagamento", nullable = false, length = 50)
     private String metodoPagamento; // Ex: "pix", "cartão de credito"
@@ -61,6 +79,21 @@ public class Pedido {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public StatusPagamento getStatusPagamento() { return statusPagamento; }
+    public void setStatusPagamento(StatusPagamento statusPagamento) { this.statusPagamento = statusPagamento; }
+
+    public StatusProcessamento getStatusProcessamento() { return statusProcessamento; }
+    public void setStatusProcessamento(StatusProcessamento statusProcessamento) { this.statusProcessamento = statusProcessamento; }
+
+    public String getCodigoRastreio() { return codigoRastreio; }
+    public void setCodigoRastreio(String codigoRastreio) { this.codigoRastreio = codigoRastreio; }
+
+    public String getGatewayPagamentoId() { return gatewayPagamentoId; }
+    public void setGatewayPagamentoId(String gatewayPagamentoId) { this.gatewayPagamentoId = gatewayPagamentoId; }
+
+    public LocalDateTime getDataPagamento() { return dataPagamento; }
+    public void setDataPagamento(LocalDateTime dataPagamento) { this.dataPagamento = dataPagamento; }
 
     public String getMetodoPagamento() { return metodoPagamento; }
     public void setMetodoPagamento(String metodoPagamento) { this.metodoPagamento = metodoPagamento; }

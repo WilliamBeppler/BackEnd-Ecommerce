@@ -25,23 +25,20 @@ public class CookieTokenService {
         this.secure = secure;
     }
 
-    /** Cookie com o token, válido pelo mesmo tempo do JWT. */
     public ResponseCookie criarCookie(String token) {
         return montar(token, Duration.ofMillis(jwtService.getExpiration()));
     }
 
-    /** Mesmo cookie, vazio e já expirado: é assim que o servidor "apaga" um cookie HttpOnly. */
     public ResponseCookie criarCookieExpirado() {
         return montar("", Duration.ZERO);
     }
 
     private ResponseCookie montar(String valor, Duration validade) {
         return ResponseCookie.from(NOME_COOKIE, valor)
-                .httpOnly(true)        // o JavaScript da página não consegue ler
-                .secure(secure)        // só HTTPS em produção (COOKIE_SECURE=true)
-                .sameSite("Strict")    // não vai junto em requisições vindas de outro site
+                .httpOnly(true)
+                .secure(secure)
+                .sameSite("Strict")
                 .path("/")
-                // SEM .domain(): o cookie fica preso ao host exato da API
                 .maxAge(validade)
                 .build();
     }

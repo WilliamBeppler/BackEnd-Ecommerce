@@ -12,17 +12,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Limite de tentativas de login que FALHARAM, em dois contadores:
- *  - por e-mail: protege uma conta de alguém testando senhas, mesmo trocando de IP;
- *  - por IP: protege contra um computador testando muitas contas (listas de senhas vazadas).
- *
- * Ao atingir o limite dentro da janela, aquele e-mail/IP fica bloqueado pelo mesmo tempo.
- * O bloqueio vale para o e-mail DIGITADO, exista ele ou não: assim não revela quem é cliente.
- *
- * Fica em memória: reiniciar o backend zera tudo, e com mais de um servidor cada um conta
- * separado (nesse dia, trocar o mapa por Redis; o resto do código não muda).
- */
 @Service
 public class LimiteTentativasLogin {
 
@@ -42,7 +31,6 @@ public class LimiteTentativasLogin {
         this(maximoPorEmail, maximoPorIp, Duration.ofMinutes(janelaMinutos), Clock.systemUTC());
     }
 
-    /** Recebe o relógio de fora para os testes poderem "avançar o tempo" sem esperar. */
     public LimiteTentativasLogin(int maximoPorEmail, int maximoPorIp, Duration janela, Clock relogio) {
         this.maximoPorEmail = maximoPorEmail;
         this.maximoPorIp = maximoPorIp;
@@ -70,7 +58,6 @@ public class LimiteTentativasLogin {
         porEmail.remove(chaveEmail(email));
     }
 
-    // "Ana@X.com" e "ana@x.com" contam juntos; senão bastaria trocar letras para burlar o limite
     private String chaveEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
     }
@@ -88,7 +75,6 @@ public class LimiteTentativasLogin {
 
     private void somarFalha(Map<String, Contador> mapa, String chave, int maximo) {
         Instant agora = relogio.instant();
-        // compute() é atômico por chave: duas requisições ao mesmo tempo não perdem contagem
         mapa.compute(chave, (k, contador) -> {
             if (contador == null || contador.venceu(agora, janela)) {
                 contador = new Contador(agora);
@@ -110,8 +96,6 @@ public class LimiteTentativasLogin {
         porIp.values().removeIf(c -> c.venceu(agora, janela));
     }
 
-    // Só é alterado dentro do compute() (uma requisição por vez, por chave);
-    // volatile garante que as leituras de fora vejam o valor mais recente.
     private static final class Contador {
         private final Instant inicioJanela;
         private volatile int falhas;
@@ -121,7 +105,6 @@ public class LimiteTentativasLogin {
             this.inicioJanela = inicioJanela;
         }
 
-        /** Acabou a janela sem bloqueio, ou acabou o bloqueio: pode recomeçar do zero. */
         private boolean venceu(Instant agora, Duration janela) {
             Instant fimDoBloqueio = bloqueadoAte;
             if (fimDoBloqueio != null) return !agora.isBefore(fimDoBloqueio);
