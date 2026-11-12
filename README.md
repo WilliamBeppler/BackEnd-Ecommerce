@@ -50,6 +50,7 @@ Este repositório é uma das três partes do sistema:
 | GET | `/api/produtos/admin` | Admin |
 | POST / PUT / DELETE | `/api/produtos/**` | Admin, vindo do painel |
 | POST | `/api/pedidos` | Logado (cria o pedido e devolve o link de pagamento) |
+| GET | `/api/pedidos/meus` | Logado (só os pedidos do dono do token) |
 | POST | `/api/pedidos/{id}/pagamento` | Dono do pedido (novo link) |
 | GET | `/api/pedidos/{id}/situacao` | Dono do pedido |
 | POST | `/api/pedidos/{id}/conferir-pagamento?payment_id=` | Dono do pedido |
@@ -72,11 +73,12 @@ Este repositório é uma das três partes do sistema:
 
 ```
 src/main/java/org/project
-├── controller/   rotas (usuários, produtos, pedidos, admin, webhook)
+├── controller/   só HTTP: recebe, chama o service, responde (+ TratadorDeErros)
 ├── dto/          o que entra e o que sai da API (nunca as entidades)
 ├── model/        entidades JPA e enums de status
 ├── repository/   acesso ao banco
-├── service/      regras de status e filtros dos pedidos
+├── service/      regras de negócio, validadores e regras de status
+│   └── excecao/  erros de negócio (viram 400, 401, 404 e 429 no TratadorDeErros)
 ├── pagamento/    integração com o Mercado Pago
 └── security/     JWT em cookie, CORS, trava por Origin, limite de login
 ```

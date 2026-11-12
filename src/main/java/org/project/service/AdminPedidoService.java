@@ -127,7 +127,7 @@ public class AdminPedidoService {
         return montarDetalhe(pedidoRepository.save(pedido));
     }
 
-    // ---------- apoio ----------
+    //apoio
 
     private Pedido buscar(int id) {
         return pedidoRepository.findById(id)
